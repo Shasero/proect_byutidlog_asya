@@ -10,7 +10,7 @@ import os
 from keyboards import keyboard as kb
 
 
-load_dotenv('./.env')
+load_dotenv('/bot/.env')
 
 admin_id = os.getenv('ADMIN_ID')
 if admin_id is None:

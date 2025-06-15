@@ -11,7 +11,7 @@ services:
     ports:
       - "7111:7111"
     env_file: 
-      - ./.env
+      - .env
     restart: always
     environment:
       - TOKEN=${TOKEN}
