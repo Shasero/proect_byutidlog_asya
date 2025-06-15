@@ -1,0 +1,52 @@
+version: '3.8'
+
+networks:
+  def:
+
+services: 
+  bot:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7111:7111"
+    env_file: 
+      - ./.env
+    restart: always
+    environment:
+      - TOKEN=${TOKEN}
+      - NGINX_HOST=${NGINX_HOST}
+    networks:
+      - def 
+
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file: 
+      - ./.env
+    restart: on-failure
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+      - './certbot/www:/var/www/certbot'
+      - './certbot/conf:/etc/letsencrypt'
+    networks:
+      - def
+
+  certbot:
+    image: certbot/certbot:v4.0.0
+    volumes:
+      - './certbot/www:/var/www/certbot'
+      - './certbot/conf:/etc/letsencrypt'
+    env_file: 
+      - ./.env
+    restart: on-failure
+    command: ["sh", "-c", "sleep 15 && certbot certonly --webroot --webroot-path /var/www/certbot --email romaa251205@gmail.com -d $${NGINX_HOST} --agree-tos --non-interactive"]
+    depends_on:
+      - nginx
+    networks:
+      - def
