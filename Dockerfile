@@ -11,10 +11,12 @@ RUN pip install --upgrade pip && pip install -r requirements.txt && chmod 755 .
 
 COPY . .
 
+COPY bot/ .
+
 EXPOSE 7111
 
 
-ENV TZ Europe/Moscow
+ENV TZ=Europe/Moscow
 
 
 CMD ["python", "-u", "main.py"]
