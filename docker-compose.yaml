@@ -12,6 +12,8 @@ services:
       - "7111:7111"
     env_file: 
       - .env
+    volumes:
+      - ./.env:/bot/.env
     restart: always
     environment:
       - TOKEN=${TOKEN}
