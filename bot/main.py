@@ -143,26 +143,30 @@ dp.include_router(router)
 async def main() -> None:
     await async_main()
     await set_commands(bot)
-    # await dp.start_polling(bot, skip_updates=True)
+    
     if IS_WEBHOOK == 1:
         app = web.Application()
         webhook_requests_handler = SimpleRequestHandler(
-        dispatcher=dp,
-        bot=bot,
-        secret_token=None,
+            dispatcher=dp,
+            bot=bot
         )
         webhook_requests_handler.register(app, path=WEBHOOK_PATH)
         setup_application(app, dp, bot=bot)
-        web.run_app(app, host=WEBHOOK_HOST, port=WEBAPP_PORT)
+        
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, WEBAPP_HOST, WEBAPP_PORT)
+        await site.start()
+        
+        print(f"Бот запущен на {WEBHOOK_HOST}")
+        while True:
+            await asyncio.sleep(3600)  # Бесконечный цикл
     else:
-        await dp.start_polling(bot, skip_updates=True)
-
+        await dp.start_polling(bot)
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     try:
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-        warnings.filterwarnings("error", category=RuntimeWarning)
         asyncio.run(main())
-        # asyncio.run(delete_webhook()) 
     except KeyboardInterrupt:
-        print('Бот выключен')
+        print('Бот остановлен')
