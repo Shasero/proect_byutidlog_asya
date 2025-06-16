@@ -159,14 +159,31 @@ async def main() -> None:
         await site.start()
         
         print(f"Бот запущен на {WEBHOOK_HOST}")
-        while True:
-            await asyncio.sleep(3600)  # Бесконечный цикл
+        try:
+            while True:
+                await asyncio.sleep(3600)
+        except KeyboardInterrupt:
+            print("\nПолучен сигнал остановки...")
+        except Exception as e:  # <-- ДОБАВЛЯЕМ ОБРАБОТКУ ДРУГИХ ИСКЛЮЧЕНИЙ
+            print(f"\nКритическая ошибка: {e}")
+        finally:  # <-- ЭТОТ БЛОК ВЫПОЛНИТСЯ В ЛЮБОМ СЛУЧАЕ
+            print("Останавливаем бота...")
+            await bot.session.close()
+            if IS_WEBHOOK == 1:
+                await runner.cleanup()
+            print("Бот успешно остановлен")
     else:
-        await dp.start_polling(bot)
+        try:
+            await dp.start_polling(bot)
+        except KeyboardInterrupt:
+            print("\nПолучен сигнал остановки...")
+        except Exception as e:  # <-- ОБРАБОТКА ДЛЯ POLLING РЕЖИМА
+            print(f"\nКритическая ошибка: {e}")
+        finally:
+            print("Останавливаем бота...")
+            await bot.session.close()
+            print("Бот успешно остановлен")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print('Бот остановлен')
+    asyncio.run(main())
