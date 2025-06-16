@@ -6,10 +6,12 @@ WORKDIR /bot
 COPY requirements.txt requirements.txt
 
 
-RUN pip install --upgrade pip && pip install -r requirements.txt && chmod 755 .
+RUN pip install --upgrade pip && pip install -r requirements.txt && chmod 755 . && chmod 644 .env
 
 
 COPY . .
+
+COPY .env .env
 
 COPY bot/ .
 

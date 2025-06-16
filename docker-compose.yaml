@@ -5,19 +5,23 @@ networks:
 
 services: 
   bot:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    environment:
+      - TOKEN=${TOKEN}
+      - NGINX_HOST=${NGINX_HOST}
+      - TOKEN=${TOKEN}
+      - ADMIN_ID=${ADMIN_ID}
+      - ADMIN_ID2=${ADMIN_ID2}
+      - NGINX_HOST=${NGINX_HOST}
+      - PHONE=${PHONE}
+    volumes:
+      - ./.env:/bot/.env
+      - ./dbvoronkaasyabot.sqlite3:/bot/dbvoronkaasyabot.sqlite3
     ports:
       - "7111:7111"
     env_file: 
       - .env
-    volumes:
-      - ./.env:/bot/.env
     restart: always
-    environment:
-      - TOKEN=${TOKEN}
-      - NGINX_HOST=${NGINX_HOST}
     networks:
       - def 
 
