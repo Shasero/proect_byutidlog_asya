@@ -1,23 +1,18 @@
-FROM python:3.13.3-slim
+FROM python:3.12-slim
 
 WORKDIR /bot
 
 
-COPY requirements.txt requirements.txt
+COPY requirements.txt .
 
 
-RUN pip install --upgrade pip && pip install -r requirements.txt && chmod 755 . && chmod 644 .env
-
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-
-COPY .env .env
-
 COPY bot/ .
 
 EXPOSE 7111
-
-
 ENV TZ=Europe/Moscow
 
 
